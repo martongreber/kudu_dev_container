@@ -1,0 +1,20 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.245.2/containers/ubuntu
+{
+	"name": "Kudu_dev",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"args": {}
+	},
+	"workspaceMount": "source=${localWorkspaceFolder},target=/mnt/kudu,type=bind",
+	"workspaceFolder": "/kudu",
+	"postCreateCommand": "cp -R /mnt/kudu/.git/* ./.git/ && cp -R /mnt/kudu/.vscode ./",
+	"customizations": {
+		"vscode": {
+		  // Add the IDs of extensions you want installed when the container is created.
+		  "extensions": [
+			"pucelle.run-on-save"
+		]
+		}
+	  }
+}

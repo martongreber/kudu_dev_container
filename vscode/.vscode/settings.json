@@ -1,0 +1,11 @@
+{
+    "runOnSave.statusMessageTimeout": 3000,
+    "runOnSave.commands": [
+        {
+            // sync workspace folder with the mounted host repository
+            "match": ".*",
+            "command": "rsync -avP ${workspaceFolder}/ /mnt/kudu --filter=':- .gitignore'",
+            "runIn":"terminal"
+        }
+    ]
+}
