@@ -1,1 +1,1 @@
-FROM murculus/build:latest
+FROM murculus/debug:latest
