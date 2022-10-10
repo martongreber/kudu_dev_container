@@ -106,7 +106,7 @@ FROM thirdparty AS release
 
 ARG BUILD_DIR="/kudu"
 ARG BUILD_TYPE=release
-ARG LINK_TYPE=
+ARG LINK_TYPE=dynamic
 
 # Use the bash shell for all RUN commands.
 # SHELL ["/bin/bash", "-c"]

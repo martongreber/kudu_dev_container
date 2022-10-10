@@ -2,44 +2,34 @@
 :toc:
 
 
-== Motivation
-Setting up a local development environemnt can take signifficant amounts of time.
+== How to use it \ Example workflow
+Prerequisites:
 
-* There is no default set of IDE/configuration -> everybody needs to figure out what works for them
-* People are developing on various platforms, like ubuntu, centos or macos -> issues tend to be harder to track down: is it a config error, or did I break something?
-* Situation: we are diligently working on our precious feature. Let's pull down the latest changes from master, such that we can rebase in time to avoid larger merge conflicts. The changes contained a teeny-tiny package update in the thirdparty. We are not quite versed in how to rebuild a single package. We build something. But then during the Kudu build, we get weird linker errors from thirdparty ... rm -rf ./thirdparty/installed and just rebuild everything -> 45 mins
+* make a Kudu fork
+* install docker on your machine
+* install vscode 
+** install "Dev Containers" extension
 
-All of these cost precious developer time, or can be the reason that an aspiring open source develper throws in the towel.
+Notions:
 
-The solution: Kudu developer images.
+* VSCode command palette: CMD+SHFT+P
+* GoTo file: CMD+P
 
-Imagine a world, where you git clone Apache Kudu, you open up your IDE, click "Open in container" and you have everything pre-built! Ready to code away!
+Setup 
 
-== Getting started 
+. Pull down the Kudu debug build image: docker pull murculus/debug
+. Bare clone your fork: git clone --bare <your_fork> (-> $KUDU_ROOT)
+. Clone this dev velocity repo (-> $KUDU_DEV_VELOCITY_ROOT)
+. git config --global --add safe.directory $KUDU_ROOT
+. cd $KUDU_ROOT
+. git worktree add master master
+. cd master
+. cp -R $KUDU_DEV_VELOCITY_ROOT/vscode/.devcontainer $KUDU_ROOT/master
+. cp -R $KUDU_DEV_VELOCITY_ROOT/vscode/.vscode $KUDU_ROOT/master
+. code . (open vscode)
+. Command palette: "Dev Containers: Open Folder in Container ... "
 
-. Copy the VSCode dotfiles into your Kudu project root:
 
-.. git clone apache kudu (-> $KUDU_ROOT)
-.. git clone this repository (-> $KUDU_DEV_VELOCITY_ROOT)
-.. run cp $KUDU_DEV_VELOCITY_ROOT/vscode/* $KUDU_ROOT
-
-
-. Change some git folder settings (explained later):
-.. git config --global --add safe.directory $KUDU_ROOT
-
-
-== How it works 
-
-== Working on multiple branches
-
-== Speed comparision
-Building Kudu Docker image from scratch on a common developer machine, with the following specs:
-
-* 16 cores i9-9900 @ 3.10GHz
-* 64 Gb memory
-* Download speed: 917.23 Mbps
-
-takes *1 hour* (dev bootstrap: 7 mins, thirdparty: 42 mins, debug build: 11 mins);
-
-whereas *docker pull murculus/debug took 3.5 mins*.
-
+== How it works
+=== Host/container mapping
+=== Git worktrees
