@@ -1,4 +1,5 @@
 set -e
+mkdir -p build/asan
 cd build/asan
 # For sanitizer builds clang needs to be used
 export CLANG=/kudu/build-support/ccache-clang/clang

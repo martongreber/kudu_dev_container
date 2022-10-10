@@ -1,4 +1,5 @@
 set -e
+mkdir -p build/release
 cd build/release
 time ( \
 ../../thirdparty/installed/common/bin/cmake \

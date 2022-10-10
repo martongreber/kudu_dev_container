@@ -1,4 +1,5 @@
 set -e
+mkdir -p build/debug
 cd build/debug
 time ( \
 ../../thirdparty/installed/common/bin/cmake \
