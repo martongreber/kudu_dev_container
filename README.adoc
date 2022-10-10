@@ -65,7 +65,7 @@ https://www.theserverside.com/blog/Coffee-Talk-Java-News-Stories-and-Opinions/Us
 Usually we have a repository, which is cloned into a folder. If we switch branhces, the contents of this exact folder change.
 
 ----
-Kudu 
+Kudu/
 |_.git/
 |_.gitignore
 |_<source_files@master>
@@ -74,7 +74,7 @@ Kudu
 With git worktrees you have a top level folder, without any of the actual source files, hence the --bare clone. Then each added branch gets a new subfolder. These subfolders are basically git repos, checked out at that given branch. Since each branch lives in a different folder, these can be opened in a parallel fashion. -> you get the ability to work on multiple branches at the same time!
 
 ----
-Kudu
+Kudu/
 |_HEAD
 |_refs
 |

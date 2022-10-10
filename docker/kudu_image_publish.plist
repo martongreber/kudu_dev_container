@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.mgreber.kudu</string>
+    <key>Program</key>
+    <string>/usr/bin/caffeinate</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>-im</string>
+        <string>/Users/mgreber/git/kudu_dev_velocity/docker/build-and-publish-apple-silicon.sh</string>
+    </array>
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>1</integer>
+        <key>Minute</key>
+        <integer>02</integer>
+    </dict>
+</dict>
+</plist>
