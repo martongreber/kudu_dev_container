@@ -24,6 +24,8 @@ Imagine a world, where you git clone Apache Kudu, you open up your IDE, click "O
 .. run cp $KUDU_DEV_VELOCITY_ROOT/vscode/* $KUDU_ROOT
 
 
+. Change some git folder settings (explained later):
+.. git config --global --add safe.directory $KUDU_ROOT
 
 
 == How it works 

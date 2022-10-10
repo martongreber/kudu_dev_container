@@ -4,8 +4,15 @@
         {
             // sync workspace folder with the mounted host repository
             "match": ".*",
-            "command": "rsync -avP ${workspaceFolder}/ /mnt/kudu --filter=':- .gitignore'",
+            "command": "rsync -r ${workspaceFolder}/ /mnt/kudu --filter=':- .gitignore'",
+            // "terminal" for kudu_dev_velocity development
+            // "backend" for end users -> sync messages are in the background
             "runIn":"terminal"
         }
-    ]
+    ],
+    //in source files 100 char should be the limit
+    "editor.rulers": [100],
+    "[git-commit]": {"editor.rulers": [50,72]},
+    "testMate.cpp.discovery.loadOnStartup": true,
+    "testMate.cpp.test.executables": "build/latest/bin/*test",
 }

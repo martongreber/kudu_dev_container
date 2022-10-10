@@ -8,12 +8,19 @@
 	},
 	"workspaceMount": "source=${localWorkspaceFolder},target=/mnt/kudu,type=bind",
 	"workspaceFolder": "/kudu",
+	// Ideally if the dotfiles are part of the official Kudu repo, we only need the first copy statement
 	"postCreateCommand": "cp -R /mnt/kudu/.git/* ./.git/ && cp -R /mnt/kudu/.vscode ./",
 	"customizations": {
 		"vscode": {
 		  // Add the IDs of extensions you want installed when the container is created.
 		  "extensions": [
-			"pucelle.run-on-save"
+			//requred to sync container kudu build folder to the mounted host folder at /mnt/kudu
+			"pucelle.run-on-save",
+			"ms-vscode.cpptools",
+			// cmake language support 
+			"twxs.cmake",
+			// test explorer and runner
+			"matepek.vscode-catch2-test-adapter",
 		]
 		}
 	  }
