@@ -15,7 +15,11 @@ build-and-publish() {
   echo "$(timestamp) LOG: pwd: $(pwd)"
   # prune all images to have a clean build sequence
   echo "$(timestamp) LOG: running docker prune"
-  docker image prune --all --force
+  # docker image prune --all --force
+  set +e
+  docker rm -vf $(docker ps -aq)
+  docker rmi -f $(docker images -aq)
+  set -e
   for build_type in "${build_types[@]}"
   do
       echo "$(timestamp) LOG: starting image build: $build_type"
