@@ -4,6 +4,7 @@
 # exit when any command fails, to avoid long hanging job
 set -e
 
+# build_types=("dev" "thirdparty" "thirdparty_all" "debug" "release" "asan" "tsan")
 build_types=("dev" "thirdparty" "debug" "release")
 suffix="_apple_silicon"
 
@@ -15,24 +16,27 @@ timestamp() {
 build-and-publish() {
   echo "$(timestamp) LOG: pwd: $(pwd)"
   # prune all images to have a clean build sequence
-  echo "$(timestamp) LOG: running docker prune"
+
+  # echo "$(timestamp) LOG: running docker prune"
   # /usr/local/bin/docker image prune --all --force
   set +e
   /usr/local/bin/docker rm -vf $(/usr/local/bin/docker ps -aq)
   /usr/local/bin/docker rmi -f $(/usr/local/bin/docker images -aq)
   set -e
-  for build_type in "${build_types[@]}/usr/local/bin/"
+
+  for build_type in "${build_types[@]}"
   do
-      echo "$(timestamp) LOG: starting image build: $build_type$suffix"
-      time /usr/local/bin/docker build --target $build_type -t murculus/$build_type$suffix . 
-      echo "$(timestamp) LOG: finished image build: $build_type"
-      if [ "$build_type" == "dev" ]; then
-        echo "$(timestamp) LOG: not publishing $build_type to dockerhub: $build_type"
+      full_build_type=$build_type$suffix
+      echo "$(timestamp) LOG: starting image build: $full_build_type"
+      time /usr/local/bin/docker build --target $full_build_type -t murculus/$full_build_type -f $SOURCE_ROOT/Dockerfile_apple_silicon . 
+      echo "$(timestamp) LOG: finished image build: $full_build_type"
+      if [ "$full_build_type" == "dev_apple_silicon" ]; then
+        echo "$(timestamp) LOG: not publishing $full_build_type to dockerhub: $full_build_type"
       else
-        echo "$(timestamp) LOG: starting image push to dockerhub: $build_type$suffix"
+        echo "$(timestamp) LOG: starting image push to dockerhub: $full_build_type"
         $SOURCE_ROOT/.secret
-        time /usr/local/bin/docker push murculus/$build_type$suffix
-        echo "$(timestamp) LOG: finished image push to dockerhub: $build_type$suffix"
+        time /usr/local/bin/docker push murculus/$full_build_type
+        echo "$(timestamp) LOG: finished image push to dockerhub: $full_build_type"
       fi
   done
   echo "$(timestamp) LOG: finished"
