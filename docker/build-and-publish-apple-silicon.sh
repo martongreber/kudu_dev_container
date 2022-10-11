@@ -16,14 +16,16 @@ timestamp() {
 build-and-publish() {
   echo "$(timestamp) LOG: pwd: $(pwd)"
   # prune all images to have a clean build sequence
-
-  # echo "$(timestamp) LOG: running docker prune"
+  echo "$(timestamp) LOG: running docker prune"
   # /usr/local/bin/docker image prune --all --force
   set +e
   /usr/local/bin/docker rm -vf $(/usr/local/bin/docker ps -aq)
   /usr/local/bin/docker rmi -f $(/usr/local/bin/docker images -aq)
   set -e
 
+  # for thirdparty_all -> privileged container build is needed.
+  # /usr/local/bin/docker buildx rm -f mybuilder
+  # /usr/local/bin/docker buildx create --use --name mybuilder --buildkitd-flags '--allow-insecure-entitlement'
   for build_type in "${build_types[@]}"
   do
       full_build_type=$build_type$suffix
