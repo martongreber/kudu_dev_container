@@ -23,8 +23,13 @@ build-and-publish() {
   for build_type in "${build_types[@]}"
   do
       echo "$(timestamp) LOG: starting image build: $build_type"
-      time docker build --target $build_type -t murculus/$build_type . 
+      if [ "$build_type" == "dev" ]; then
+        time docker build --target $build_type -t murculus/$build_type --no-cache . 
+      else
+        time docker build --target $build_type -t murculus/$build_type . 
+      fi
       echo "$(timestamp) LOG: finished image build: $build_type"
+
       if [ "$build_type" == "dev" ]; then
         echo "$(timestamp) LOG: not publishing $build_type to dockerhub: $build_type"
       else

@@ -29,9 +29,14 @@ build-and-publish() {
   for build_type in "${build_types[@]}"
   do
       full_build_type=$build_type$suffix
-      echo "$(timestamp) LOG: starting image build: $full_build_type"
-      time /usr/local/bin/docker build --target $full_build_type -t murculus/$full_build_type -f $SOURCE_ROOT/Dockerfile_apple_silicon . 
+        echo "$(timestamp) LOG: starting image build: $full_build_type"
+      if [ "$full_build_type" == "dev_apple_silicon" ]; then
+        time /usr/local/bin/docker build --target $full_build_type -t murculus/$full_build_type -f $SOURCE_ROOT/Dockerfile_apple_silicon --no-cache . 
+      else
+        time /usr/local/bin/docker build --target $full_build_type -t murculus/$full_build_type -f $SOURCE_ROOT/Dockerfile_apple_silicon . 
+      fi
       echo "$(timestamp) LOG: finished image build: $full_build_type"
+
       if [ "$full_build_type" == "dev_apple_silicon" ]; then
         echo "$(timestamp) LOG: not publishing $full_build_type to dockerhub: $full_build_type"
       else
