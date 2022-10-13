@@ -15,19 +15,13 @@ build-and-publish() {
   echo "$(timestamp) LOG: pwd: $(pwd)"
   # prune all images to have a clean build sequence
   echo "$(timestamp) LOG: running docker prune"
-  # docker image prune --all --force
-  set +e
-  docker rm -vf $(docker ps -aq)
-  docker rmi -f $(docker images -aq)
-  set -e
+  docker image prune --all --force
+  docker builder prune --all --force
+
   for build_type in "${build_types[@]}"
   do
       echo "$(timestamp) LOG: starting image build: $build_type"
-      if [ "$build_type" == "dev" ]; then
-        time docker build --target $build_type -t murculus/$build_type --no-cache . 
-      else
-        time docker build --target $build_type -t murculus/$build_type . 
-      fi
+      time docker build --target $build_type -t murculus/$build_type . 
       echo "$(timestamp) LOG: finished image build: $build_type"
 
       if [ "$build_type" == "dev" ]; then

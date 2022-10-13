@@ -17,11 +17,8 @@ build-and-publish() {
   echo "$(timestamp) LOG: pwd: $(pwd)"
   # prune all images to have a clean build sequence
   echo "$(timestamp) LOG: running docker prune"
-  # /usr/local/bin/docker image prune --all --force
-  set +e
-  /usr/local/bin/docker rm -vf $(/usr/local/bin/docker ps -aq)
-  /usr/local/bin/docker rmi -f $(/usr/local/bin/docker images -aq)
-  set -e
+  /usr/local/bin/docker image prune --all --force
+  /usr/local/bin/docker builder prune --all --force
 
   # for thirdparty_all -> privileged container build is needed.
   # /usr/local/bin/docker buildx rm -f mybuilder
@@ -29,12 +26,8 @@ build-and-publish() {
   for build_type in "${build_types[@]}"
   do
       full_build_type=$build_type$suffix
-        echo "$(timestamp) LOG: starting image build: $full_build_type"
-      if [ "$full_build_type" == "dev_apple_silicon" ]; then
-        time /usr/local/bin/docker build --target $full_build_type -t murculus/$full_build_type -f $SOURCE_ROOT/Dockerfile_apple_silicon --no-cache . 
-      else
-        time /usr/local/bin/docker build --target $full_build_type -t murculus/$full_build_type -f $SOURCE_ROOT/Dockerfile_apple_silicon . 
-      fi
+      echo "$(timestamp) LOG: starting image build: $full_build_type"
+      time /usr/local/bin/docker build --target $full_build_type -t murculus/$full_build_type -f $SOURCE_ROOT/Dockerfile_apple_silicon . 
       echo "$(timestamp) LOG: finished image build: $full_build_type"
 
       if [ "$full_build_type" == "dev_apple_silicon" ]; then
