@@ -11,12 +11,20 @@ timestamp() {
 }
 
 build-and-publish() {
+
+  docker buildx create --driver-opt image=moby/buildkit:master  \
+                      --use --name insecure-builder \
+                      --buildkitd-flags '--allow-insecure-entitlement security.insecure' \
+                      --driver-opt env.BUILDKIT_STEP_LOG_MAX_SIZE=-1 --driver-opt env.BUILDKIT_STEP_LOG_MAX_SPEED=-1
+
+  docker buildx use insecure-builder
+
   echo "$(timestamp) LOG: pwd: $(pwd)"
 
   for build_type in "${build_types[@]}"
   do
       echo "$(timestamp) LOG: starting image build: $build_type:$build_arch"
-      time docker build --target $build_type -t murculus/$build_type:$build_arch . 
+      time docker buildx build --allow security.insecure --target $build_type -t murculus/$build_type:$build_arch . 
       echo "$(timestamp) LOG: finished image build: $build_type:$build_arch"
 
       if [ "$build_type" == "dev" ]; then
@@ -27,6 +35,9 @@ build-and-publish() {
         echo "$(timestamp) LOG: finished image push to dockerhub: $build_type"
       fi
   done
+
+  docker buildx rm insecure-builder
+
   echo "$(timestamp) LOG: finished"
 }
 

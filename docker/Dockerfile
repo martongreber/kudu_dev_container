@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.3-labs
 # ---- Dev ----
 FROM ubuntu:18.04 as dev
 # Cache busting technique: 
@@ -47,7 +48,7 @@ FROM kudu-thirdparty AS kudu-thirdparty-all
 ARG BUILD_DIR="/kudu"
 WORKDIR ${BUILD_DIR}
 RUN git pull
-RUN thirdparty/build-if-necessary.sh all \
+RUN --security=insecure thirdparty/build-if-necessary.sh all \
   # Remove the files left behind that we don't need.
   # Remove all the source files except the hadoop, hive, postgresql, ranger, and sentry sources
   # which are pre-built and symlinked into the installed/common/opt directory.
