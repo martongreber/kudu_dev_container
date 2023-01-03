@@ -1,6 +1,7 @@
 # syntax=docker/dockerfile:1.3-labs
 # ---- Dev ----
 FROM ubuntu:18.04 as dev
+
 # Cache busting technique: 
 # https://stackoverflow.com/questions/56945125/force-docker-to-rebuild-a-layer-based-on-latest-commit-of-a-git-repo
 ADD https://api.github.com/repos/apache/kudu/git/refs/heads/master version.json
@@ -23,31 +24,41 @@ ENV PATH /usr/lib/ccache:/usr/lib64/ccache/:$PATH
 
 CMD ["/bin/bash"]
 
-# ---- Thirdparty ----
-FROM dev AS kudu-thirdparty
+# ---- Thirdparty intermediate ----
+
+# this image builds the thirdparty package, it is not yet stripped down, such that it can be used
+# in the instrumented 3rdparty build as well.
+FROM dev AS kudu-thirdparty-intermediate
 
 ARG BUILD_DIR="/kudu"
 WORKDIR ${BUILD_DIR}
-RUN thirdparty/build-if-necessary.sh \
-  # Remove the files left behind that we don't need.
-  # Remove all the source files except the hadoop, hive, postgresql, ranger, and sentry sources
-  # which are pre-built and symlinked into the installed/common/opt directory.
-  && find thirdparty/src/* -maxdepth 0 -type d  \
+RUN thirdparty/build-if-necessary.sh 
+
+CMD ["/bin/bash"]
+
+# ---- Thirdparty ----
+FROM kudu-thirdparty-intermediate AS kudu-thirdparty
+
+ARG BUILD_DIR="/kudu"
+WORKDIR ${BUILD_DIR}
+# Remove the files left behind that we don't need.
+# Remove all the source files except the hadoop, hive, postgresql, ranger, and sentry sources
+# which are pre-built and symlinked into the installed/common/opt directory.
+# Remove all the build files except the llvm build which is symlinked into
+# the clang-toolchain directory.
+RUN find thirdparty/src/* -maxdepth 0 -type d  \
     \( ! -name 'hadoop-*' ! -name 'hive-*' ! -name 'postgresql-*' ! -name 'ranger-*' ! -name 'sentry-*' \) \
     -prune -exec rm -rf {} \; \
-  # Remove all the build files except the llvm build which is symlinked into
-  # the clang-toolchain directory.
-  && find thirdparty/build/* -maxdepth 0 -type d ! -name 'llvm-*' -prune -exec rm -rf {} \;
+    && find thirdparty/build/* -maxdepth 0 -type d ! -name 'llvm-*' -prune -exec rm -rf {} \;
 
 CMD ["/bin/bash"]
 
 
 # ---- Thirdparty all ----
-FROM kudu-thirdparty AS kudu-thirdparty-all
+FROM kudu-thirdparty-intermediate AS kudu-thirdparty-all
 
 ARG BUILD_DIR="/kudu"
 WORKDIR ${BUILD_DIR}
-RUN git pull
 RUN --security=insecure thirdparty/build-if-necessary.sh all \
   # Remove the files left behind that we don't need.
   # Remove all the source files except the hadoop, hive, postgresql, ranger, and sentry sources

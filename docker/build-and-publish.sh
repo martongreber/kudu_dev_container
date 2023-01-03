@@ -4,6 +4,8 @@
 set -e
 build_arch=$(uname -m)
 build_types=("dev" "kudu-thirdparty" "kudu-thirdparty-all" "kudu-debug" "kudu-release" "kudu-asan" "kudu-tsan")
+builder_name="insecure_builder"
+username="murculus"
 
 # Define a timestamp function
 timestamp() {
@@ -12,12 +14,20 @@ timestamp() {
 
 build-and-publish() {
 
+  set +e
+  docker buildx inspect $builder_name 
+  builder_inspect=$?
+  set -e
+  if [ $builder_inspect -eq 0 ]; then
+    echo "$(timestamp) LOG: removing builder: $builder_name as it already exists"
+    docker buildx rm $builder_name
+  fi
   docker buildx create --driver-opt image=moby/buildkit:master  \
-                      --use --name insecure-builder \
+                      --use --name $builder_name \
                       --buildkitd-flags '--allow-insecure-entitlement security.insecure' \
                       --driver-opt env.BUILDKIT_STEP_LOG_MAX_SIZE=-1 --driver-opt env.BUILDKIT_STEP_LOG_MAX_SPEED=-1
 
-  docker buildx use insecure-builder
+  docker buildx use $builder_name
 
   echo "$(timestamp) LOG: pwd: $(pwd)"
 
@@ -27,16 +37,24 @@ build-and-publish() {
       time docker buildx build --allow security.insecure --target $build_type -t murculus/$build_type:$build_arch . 
       echo "$(timestamp) LOG: finished image build: $build_type:$build_arch"
 
-      if [ "$build_type" == "dev" ]; then
-        echo "$(timestamp) LOG: not publishing $build_type to dockerhub: $build_type"
-      else
-        echo "$(timestamp) LOG: starting image push to dockerhub: $build_type"
-        time docker push murculus/$build_type:$build_arch
-        echo "$(timestamp) LOG: finished image push to dockerhub: $build_type"
-      fi
+      echo "$(timestamp) LOG: starting image push to dockerhub: $build_type:$build_arch"
+      time docker push murculus/$build_type:$build_arch
+      echo "$(timestamp) LOG: finished image push to dockerhub: $build_type:$build_arch"
+
+      #update the manifest
+      echo "$(timestamp) LOG: starting updating the manifest, latest tag: $build_type:$build_arch"
+      set +e
+      docker manifest create \
+        $username/$build_type:latest \
+        --amend $username/$build_type:x86_64 \
+        --amend $username/$build_type:aarch64 
+      docker manifest push $username/$build_type:latest
+      set -e
+      echo "$(timestamp) LOG: finished updating the manifest, latest tag: $build_type:$build_arch"
+
   done
 
-  docker buildx rm insecure-builder
+  docker buildx rm $builder_name
 
   echo "$(timestamp) LOG: finished"
 }
