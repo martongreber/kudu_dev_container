@@ -4,6 +4,8 @@
 == Linux 
 Just create a cron tab for build-and-publish.sh
 
+0 2 * * * $kudu_dev_velocity_root/docker/build-and-publish.sh 
+
 == macOS
 A short setup, to wake your mac up in the middle of the night to publish the image.
 

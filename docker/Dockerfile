@@ -1,5 +1,8 @@
 # ---- Dev ----
 FROM ubuntu:18.04 as dev
+# Cache busting technique: 
+# https://stackoverflow.com/questions/56945125/force-docker-to-rebuild-a-layer-based-on-latest-commit-of-a-git-repo
+ADD https://api.github.com/repos/apache/kudu/git/refs/heads/master version.json
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update
@@ -20,7 +23,7 @@ ENV PATH /usr/lib/ccache:/usr/lib64/ccache/:$PATH
 CMD ["/bin/bash"]
 
 # ---- Thirdparty ----
-FROM dev AS thirdparty
+FROM dev AS kudu-thirdparty
 
 ARG BUILD_DIR="/kudu"
 WORKDIR ${BUILD_DIR}
@@ -39,7 +42,7 @@ CMD ["/bin/bash"]
 
 
 # ---- Thirdparty all ----
-FROM thirdparty AS thirdparty_all
+FROM kudu-thirdparty AS kudu-thirdparty-all
 
 ARG BUILD_DIR="/kudu"
 WORKDIR ${BUILD_DIR}
@@ -61,7 +64,7 @@ CMD ["/bin/bash"]
 
 
 # ---- Debug ----
-FROM thirdparty AS debug
+FROM kudu-thirdparty AS kudu-debug
 
 ARG BUILD_DIR="/kudu"
 ARG BUILD_TYPE=debug
@@ -102,7 +105,7 @@ RUN ../../thirdparty/installed/common/bin/cmake \
 CMD ["/bin/bash"]
 
 # ---- Release ----
-FROM thirdparty AS release
+FROM kudu-thirdparty AS kudu-release
 
 ARG BUILD_DIR="/kudu"
 ARG BUILD_TYPE=release
@@ -144,7 +147,7 @@ CMD ["/bin/bash"]
 
 
 # ---- Asan ----
-FROM thirdparty_all AS asan
+FROM kudu-thirdparty-all AS kudu-asan
 
 ARG BUILD_DIR="/kudu"
 ARG BUILD_TYPE=fastdebug
@@ -193,7 +196,7 @@ CMD ["/bin/bash"]
 
 
 # ---- Tsan ----
-FROM thirdparty_all AS tsan
+FROM kudu-thirdparty-all AS kudu-tsan
 
 ARG BUILD_DIR="/kudu"
 ARG BUILD_TYPE=fastdebug
