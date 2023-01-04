@@ -34,7 +34,7 @@ build-and-publish() {
   for build_type in "${build_types[@]}"
   do
       echo "$(timestamp) LOG: starting image build: $build_type:$build_arch"
-      time docker buildx build --allow security.insecure --target $build_type -t murculus/$build_type:$build_arch . 
+      time docker buildx build --output type=docker --allow security.insecure --target $build_type -t murculus/$build_type:$build_arch . 
       echo "$(timestamp) LOG: finished image build: $build_type:$build_arch"
 
       echo "$(timestamp) LOG: starting image push to dockerhub: $build_type:$build_arch"
