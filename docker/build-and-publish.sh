@@ -23,6 +23,7 @@ build-and-publish() {
     echo "$(timestamp) LOG: removing builder: $builder_name as it already exists"
     docker buildx rm $builder_name
   fi
+  # https://stackoverflow.com/questions/48098671/build-with-docker-and-privileged
   docker buildx create --driver-opt image=moby/buildkit:master  \
                       --use --name $builder_name \
                       --buildkitd-flags '--allow-insecure-entitlement security.insecure' \

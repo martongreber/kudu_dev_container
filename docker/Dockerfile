@@ -231,7 +231,7 @@ ENV NO_REBUILD_THIRDPARTY=1
 ENV CLANG=${BUILD_DIR}/build-support/ccache-clang/clang
 
 #build kudu -> basically populate ccache
-RUN CC=${CLANG} CXX=${CLANG}++ ../../thirdparty/installed/common/bin/cmake \
+RUN --security=insecure CC=${CLANG} CXX=${CLANG}++ ../../thirdparty/installed/common/bin/cmake \
   -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
   -DKUDU_LINK=$LINK_TYPE \
   -DKUDU_USE_TSAN=1 \
