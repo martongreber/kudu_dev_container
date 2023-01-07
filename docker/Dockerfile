@@ -217,6 +217,8 @@ ARG LINK_TYPE=dynamic
 # Use the bash shell for all RUN commands.
 # SHELL ["/bin/bash", "-c"]
 WORKDIR ${BUILD_DIR}
+COPY linking.patch ./ 
+RUN git apply linking.patch 
 
 RUN ccache -C
 RUN ccache -M 10G

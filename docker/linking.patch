@@ -1,0 +1,15 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 70e6bcd9d..fa2bd0647 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -454,8 +454,8 @@ if (${KUDU_USE_TSAN})
+     # workaround for github.com/google/sanitizers/issues/1208
+     # TSAN with dynamic linking cause all of test cases failed on aarch64,
+     # we don't apply ENABLE_DIST_TEST on aarch64, so apply static linking direcly
+-    message("Using static linking for TSAN on aarch64")
+-    set(KUDU_LINK "s")
++    #message("Using static linking for TSAN on aarch64")
++    #set(KUDU_LINK "s")
+   endif()
+ endif()
+ 
