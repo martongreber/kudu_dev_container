@@ -15,6 +15,8 @@ timestamp() {
 
 build-and-publish() {
 
+  docker login
+
   set +e
   docker buildx inspect $builder_name 
   builder_inspect=$?
