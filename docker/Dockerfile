@@ -13,7 +13,7 @@ ENV DEBIAN_FRONTEND=
 
 RUN git clone https://github.com/apache/kudu.git 
 
-ARG BUILD_DIR="/kudu"
+ARG BUILD_DIR="/apache/dev/git/kudu"
 WORKDIR ${BUILD_DIR}
 
 RUN ./docker/bootstrap-dev-env.sh \
@@ -30,7 +30,7 @@ CMD ["/bin/bash"]
 # in the instrumented 3rdparty build as well.
 FROM dev AS kudu-thirdparty-intermediate
 
-ARG BUILD_DIR="/kudu"
+ARG BUILD_DIR="/apache/dev/git/kudu"
 WORKDIR ${BUILD_DIR}
 RUN thirdparty/build-if-necessary.sh 
 
@@ -57,7 +57,7 @@ CMD ["/bin/bash"]
 # ---- Thirdparty all ----
 FROM kudu-thirdparty-intermediate AS kudu-thirdparty-all
 
-ARG BUILD_DIR="/kudu"
+ARG BUILD_DIR="/apache/dev/git/kudu"
 WORKDIR ${BUILD_DIR}
 RUN --security=insecure thirdparty/build-if-necessary.sh all \
   # Remove the files left behind that we don't need.
@@ -78,7 +78,7 @@ CMD ["/bin/bash"]
 # ---- Debug ----
 FROM kudu-thirdparty AS kudu-debug
 
-ARG BUILD_DIR="/kudu"
+ARG BUILD_DIR="/apache/dev/git/kudu"
 ARG BUILD_TYPE=debug
 ARG LINK_TYPE=dynamic
 
@@ -119,7 +119,7 @@ CMD ["/bin/bash"]
 # ---- Release ----
 FROM kudu-thirdparty AS kudu-release
 
-ARG BUILD_DIR="/kudu"
+ARG BUILD_DIR="/apache/dev/git/kudu"
 ARG BUILD_TYPE=release
 ARG LINK_TYPE=dynamic
 
@@ -161,7 +161,7 @@ CMD ["/bin/bash"]
 # ---- Asan ----
 FROM kudu-thirdparty-all AS kudu-asan
 
-ARG BUILD_DIR="/kudu"
+ARG BUILD_DIR="/apache/dev/git/kudu"
 ARG BUILD_TYPE=fastdebug
 ARG LINK_TYPE=dynamic
 
@@ -210,7 +210,7 @@ CMD ["/bin/bash"]
 # ---- Tsan ----
 FROM kudu-thirdparty-all AS kudu-tsan
 
-ARG BUILD_DIR="/kudu"
+ARG BUILD_DIR="/apache/dev/git/kudu"
 ARG BUILD_TYPE=fastdebug
 ARG LINK_TYPE=dynamic
 
@@ -256,3 +256,4 @@ RUN CC=${CLANG} CXX=${CLANG}++ ../../thirdparty/installed/common/bin/cmake \
 
 # Entry point to bash.
 CMD ["/bin/bash"]
+
