@@ -11,10 +11,11 @@ RUN apt update
 RUN apt install -y git 
 ENV DEBIAN_FRONTEND=
 
-RUN git clone https://github.com/apache/kudu.git 
-
 ARG BUILD_DIR="/apache/dev/git/kudu"
+RUN mkdir -p ${BUILD_DIR}
 WORKDIR ${BUILD_DIR}
+
+RUN git clone https://github.com/apache/kudu.git .
 
 RUN ./docker/bootstrap-dev-env.sh \
   && ./docker/bootstrap-java-env.sh \
