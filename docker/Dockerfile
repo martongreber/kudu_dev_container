@@ -40,7 +40,7 @@ CMD ["/bin/bash"]
 # ---- Thirdparty ----
 FROM kudu-thirdparty-intermediate AS kudu-thirdparty
 
-ARG BUILD_DIR="/kudu"
+ARG BUILD_DIR="/apache/dev/git/kudu"
 WORKDIR ${BUILD_DIR}
 # Remove the files left behind that we don't need.
 # Remove all the source files except the hadoop, hive, postgresql, ranger, and sentry sources
