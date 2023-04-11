@@ -16,6 +16,8 @@ timestamp() {
 build-and-publish() {
 
   docker login
+  docker system prune -a -f
+  docker system prune -a -f --volumes
 
   set +e
   docker buildx inspect $builder_name 
