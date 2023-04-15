@@ -1,22 +1,21 @@
-= Image publishing
-(for future reference)
+# Image publishing (for future reference)
 
-== Linux 
+## Linux 
 Just create a cron tab for build-and-publish.sh
 
 0 2 * * * $kudu_dev_velocity_root/docker/build-and-publish.sh 
 
-== macOS
+## macOS
 A short setup, to wake your mac up in the middle of the night to publish the image.
 
 macOS has launchd, a good getting started page is https://www.launchd.info/[this one].
 
-. kudu_image_publish.plist is the job definition. 
-. chown root kudu_image_publish.plist
-. load the job: sudo launchctl load kudu_image_publish.plist
-.. need to use sudo, else it becomes a user agent which requires login
-. go to preferences -> battery ->  Schedule -> "Start up or wake".
-.. I set it for 1 AM every day. The job is then scheduled for 1:02 AM.
+* kudu_image_publish.plist is the job definition. 
+* chown root kudu_image_publish.plist
+* load the job: sudo launchctl load kudu_image_publish.plist
+    * need to use sudo, else it becomes a user agent which requires login
+* go to preferences -> battery ->  Schedule -> "Start up or wake".
+    * I set it for 1 AM every day. The job is then scheduled for 1:02 AM.
 
 You just put your macbook to sleep. But in my case I had to keep the lid open, to make the job start. Since it is global/system agent it wont require login to kick off.
 
