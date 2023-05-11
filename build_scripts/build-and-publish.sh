@@ -63,15 +63,15 @@ build-and-publish() {
       echo "$(timestamp) LOG: finished image build: $build_type:$build_arch"
 
       #update the manifest
-      echo "$(timestamp) LOG: starting updating the manifest, latest tag: $build_type:$build_arch"
-      set +e
-      docker manifest create \
-        $username/$build_type:latest \
-        --amend $username/$build_type:x86_64 \
-        --amend $username/$build_type:aarch64 
-      docker manifest push $username/$build_type:latest
-      set -e
-      echo "$(timestamp) LOG: finished updating the manifest, latest tag: $build_type:$build_arch"
+      # echo "$(timestamp) LOG: starting updating the manifest, latest tag: $build_type:$build_arch"
+      # set +e
+      # docker manifest create \
+      #   $username/$build_type:latest \
+      #   --amend $username/$build_type:x86_64 \
+      #   --amend $username/$build_type:aarch64
+      # docker manifest push $username/$build_type:latest
+      # set -e
+      # echo "$(timestamp) LOG: finished updating the manifest, latest tag: $build_type:$build_arch"
 
   done
 
