@@ -102,10 +102,8 @@ RUN ../../thirdparty/installed/common/bin/cmake \
   -DKUDU_LINK=$LINK_TYPE \
   -GNinja \
   ../.. \
-  && ninja 
-
+  && ninja && rm -rf ./*
 #delete the build artefacts
-RUN rm -rf ./*
 
 # run cmake for convenience
 RUN ../../thirdparty/installed/common/bin/cmake \
@@ -143,10 +141,8 @@ RUN ../../thirdparty/installed/common/bin/cmake \
   -DKUDU_LINK=$LINK_TYPE \
   -GNinja \
   ../.. \
-  && ninja 
-
+  && ninja && rm -rf ./*
 #delete the build artefacts
-RUN rm -rf ./*
 
 # run cmake for convenience
 RUN ../../thirdparty/installed/common/bin/cmake \
@@ -190,10 +186,8 @@ RUN CC=${CLANG} CXX=${CLANG}++ ../../thirdparty/installed/common/bin/cmake \
   -DKUDU_USE_UBSAN=1 \
   -GNinja \
   ../.. \
-  && ninja 
-
+  && ninja && rm -rf ./*
 #delete the build artefacts
-RUN rm -rf ./*
 
 # run cmake for convenience
 RUN CC=${CLANG} CXX=${CLANG}++ ../../thirdparty/installed/common/bin/cmake \
@@ -241,10 +235,8 @@ RUN --security=insecure CC=${CLANG} CXX=${CLANG}++ ../../thirdparty/installed/co
   -LE no_tsan \
   -GNinja \
   ../.. \
-  && ninja 
-
+  && ninja && rm -rf ./*
 #delete the build artefacts
-RUN rm -rf ./*
 
 # run cmake for convenience
 RUN CC=${CLANG} CXX=${CLANG}++ ../../thirdparty/installed/common/bin/cmake \
