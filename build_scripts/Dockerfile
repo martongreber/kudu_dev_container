@@ -42,15 +42,6 @@ FROM kudu-thirdparty-intermediate AS kudu-thirdparty
 
 ARG BUILD_DIR="/apache/dev/git/kudu"
 WORKDIR ${BUILD_DIR}
-# Remove the files left behind that we don't need.
-# Remove all the source files except the hadoop, hive, postgresql, ranger, and sentry sources
-# which are pre-built and symlinked into the installed/common/opt directory.
-# Remove all the build files except the llvm build which is symlinked into
-# the clang-toolchain directory.
-RUN find thirdparty/src/* -maxdepth 0 -type d  \
-    \( ! -name 'hadoop-*' ! -name 'hive-*' ! -name 'postgresql-*' ! -name 'ranger-*' ! -name 'sentry-*' \) \
-    -prune -exec rm -rf {} \; \
-    && find thirdparty/build/* -maxdepth 0 -type d ! -name 'llvm-*' -prune -exec rm -rf {} \;
 
 CMD ["/bin/bash"]
 
@@ -60,17 +51,7 @@ FROM kudu-thirdparty-intermediate AS kudu-thirdparty-all
 
 ARG BUILD_DIR="/apache/dev/git/kudu"
 WORKDIR ${BUILD_DIR}
-RUN --security=insecure thirdparty/build-if-necessary.sh all \
-  # Remove the files left behind that we don't need.
-  # Remove all the source files except the hadoop, hive, postgresql, ranger, and sentry sources
-  # which are pre-built and symlinked into the installed/common/opt directory.
-  && find thirdparty/src/* -maxdepth 0 -type d  \
-    \( ! -name 'hadoop-*' ! -name 'hive-*' ! -name 'postgresql-*' ! -name 'ranger-*' ! -name 'sentry-*' \) \
-    -prune -exec rm -rf {} \; \
-  # Remove all the build files except the llvm build which is symlinked into
-  # the clang-toolchain directory.
-  && find thirdparty/build/* -maxdepth 0 -type d ! -name 'llvm-*' -prune -exec rm -rf {} \;
-
+RUN --security=insecure thirdparty/build-if-necessary.sh all
 
 # Entry point to bash.
 CMD ["/bin/bash"]
