@@ -18,6 +18,10 @@ RUN mkdir /var/run/sshd
 RUN echo 'root:root' | chpasswd
 RUN sed -i 's/\#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 EXPOSE 22
+RUN echo '#!/bin/bash' > /root/sshd_entrypoint.sh
+RUN echo '# Wrapper script for starting sshd, as --entrypoint does not handle switches' >> /root/sshd_entrypoint.sh
+RUN echo "/usr/sbin/sshd -D" >> /root/sshd_entrypoint.sh
+RUN chmod +x /root/sshd_entrypoint.sh
 
 # Define $KUDU_HOME which is an already used export by the project
 RUN touch $HOME/.bashrc
