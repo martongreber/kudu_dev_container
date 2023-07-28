@@ -11,6 +11,17 @@ RUN apt update
 RUN apt install -y git
 ENV DEBIAN_FRONTEND=
 
+# Setup everything required to be albe to run ssh server,
+# and user root/root for easy login.
+RUN apt update && apt install  openssh-server -y
+RUN mkdir /var/run/sshd
+RUN echo 'root:root' | chpasswd
+RUN sed -i 's/\#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+EXPOSE 22
+
+# Define $KUDU_HOME which is an already used export by the project
+RUN touch $HOME/.bashrc
+RUN echo "export KUDU_HOME=/apache/dev/git/kudu" >> $HOME/.bashrc
 ARG BUILD_DIR="/apache/dev/git/kudu"
 RUN mkdir -p ${BUILD_DIR}
 WORKDIR ${BUILD_DIR}
