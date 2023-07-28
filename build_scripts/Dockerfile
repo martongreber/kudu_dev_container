@@ -2,13 +2,13 @@
 # ---- Dev ----
 FROM ubuntu:18.04 as dev
 
-# Cache busting technique: 
+# Cache busting technique:
 # https://stackoverflow.com/questions/56945125/force-docker-to-rebuild-a-layer-based-on-latest-commit-of-a-git-repo
 ADD https://api.github.com/repos/apache/kudu/git/refs/heads/master version.json
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update
-RUN apt install -y git 
+RUN apt install -y git
 ENV DEBIAN_FRONTEND=
 
 ARG BUILD_DIR="/apache/dev/git/kudu"
@@ -19,35 +19,26 @@ RUN git clone https://github.com/apache/kudu.git .
 
 RUN ./docker/bootstrap-dev-env.sh \
   && ./docker/bootstrap-java-env.sh \
-  && ./docker/bootstrap-python-env.sh 
+  && ./docker/bootstrap-python-env.sh
 
 ENV PATH /usr/lib/ccache:/usr/lib64/ccache/:$PATH
 
 CMD ["/bin/bash"]
 
-# ---- Thirdparty intermediate ----
-
-# this image builds the thirdparty package, it is not yet stripped down, such that it can be used
-# in the instrumented 3rdparty build as well.
-FROM dev AS kudu-thirdparty-intermediate
-
-ARG BUILD_DIR="/apache/dev/git/kudu"
-WORKDIR ${BUILD_DIR}
-RUN thirdparty/build-if-necessary.sh 
-
-CMD ["/bin/bash"]
-
 # ---- Thirdparty ----
-FROM kudu-thirdparty-intermediate AS kudu-thirdparty
+
+# this image builds the thirdparty package, it is not stripped down
+FROM dev AS kudu-thirdparty
 
 ARG BUILD_DIR="/apache/dev/git/kudu"
 WORKDIR ${BUILD_DIR}
+RUN thirdparty/build-if-necessary.sh
 
 CMD ["/bin/bash"]
 
 
 # ---- Thirdparty all ----
-FROM kudu-thirdparty-intermediate AS kudu-thirdparty-all
+FROM kudu-thirdparty AS kudu-thirdparty-all
 
 ARG BUILD_DIR="/apache/dev/git/kudu"
 WORKDIR ${BUILD_DIR}
@@ -91,7 +82,7 @@ RUN ../../thirdparty/installed/common/bin/cmake \
   -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
   -DKUDU_LINK=$LINK_TYPE \
   -GNinja \
-  ../.. 
+  ../..
 
 # Entry point to bash.
 CMD ["/bin/bash"]
@@ -130,7 +121,7 @@ RUN ../../thirdparty/installed/common/bin/cmake \
   -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
   -DKUDU_LINK=$LINK_TYPE \
   -GNinja \
-  ../.. 
+  ../..
 
 # Entry point to bash.
 CMD ["/bin/bash"]
@@ -177,7 +168,7 @@ RUN CC=${CLANG} CXX=${CLANG}++ ../../thirdparty/installed/common/bin/cmake \
   -DKUDU_USE_ASAN=1 \
   -DKUDU_USE_UBSAN=1 \
   -GNinja \
-  ../.. 
+  ../..
 
 # Entry point to bash.
 CMD ["/bin/bash"]
@@ -193,8 +184,8 @@ ARG LINK_TYPE=dynamic
 # Use the bash shell for all RUN commands.
 # SHELL ["/bin/bash", "-c"]
 WORKDIR ${BUILD_DIR}
-COPY linking.patch ./ 
-RUN git apply linking.patch 
+COPY linking.patch ./
+RUN git apply linking.patch
 
 RUN ccache -C
 RUN ccache -M 10G
@@ -226,7 +217,7 @@ RUN CC=${CLANG} CXX=${CLANG}++ ../../thirdparty/installed/common/bin/cmake \
   -DKUDU_USE_TSAN=1 \
   -LE no_tsan \
   -GNinja \
-  ../.. 
+  ../..
 
 # Entry point to bash.
 CMD ["/bin/bash"]

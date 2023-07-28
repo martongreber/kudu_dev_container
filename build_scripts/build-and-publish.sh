@@ -3,8 +3,8 @@
 # exit when any command fails, to avoid long hanging job
 set -e
 build_arch=$(uname -m)
-build_types=("dev" "kudu-thirdparty-intermediate" "kudu-thirdparty" "kudu-thirdparty-all" "kudu-debug" "kudu-release" "kudu-asan" "kudu-tsan")
-cache_for_type=("" "dev" "kudu-thirdparty-intermediate" "kudu-thirdparty-intermediate" "kudu-thirdparty" "kudu-thirdparty" "kudu-thirdparty-all" "kudu-thirdparty-all")
+build_types=("dev" "kudu-thirdparty" "kudu-thirdparty-all" "kudu-debug" "kudu-release" "kudu-asan" "kudu-tsan")
+cache_for_type=("" "dev" "kudu-thirdparty" "kudu-thirdparty" "kudu-thirdparty" "kudu-thirdparty-all" "kudu-thirdparty-all")
 builder_name="insecure_builder"
 username="murculus"
 
@@ -20,7 +20,7 @@ build-and-publish() {
   docker system prune -a -f --volumes
 
   set +e
-  docker buildx inspect $builder_name 
+  docker buildx inspect $builder_name
   builder_inspect=$?
   set -e
   if [ $builder_inspect -eq 0 ]; then
@@ -41,7 +41,7 @@ build-and-publish() {
   for index in "${!build_types[@]}"
   do
       build_type=${build_types[$index]}
-      echo "$(timestamp) LOG: creating cache switches at build stage $build_type:$build_arch" 
+      echo "$(timestamp) LOG: creating cache switches at build stage $build_type:$build_arch"
       if [ ! -z "${cache_for_type[$index]}" ]; then
         cache_switches=" --cache-from=type=registry,ref=$username/${cache_for_type[$index]}:$build_arch"
       else
@@ -58,7 +58,7 @@ build-and-publish() {
                               --cache-to=type=inline \
                               $cache_switches \
                               --target $build_type \
-                              -t murculus/$build_type:$build_arch . 
+                              -t murculus/$build_type:$build_arch .
       set +x
       echo "$(timestamp) LOG: finished image build: $build_type:$build_arch"
 
@@ -83,6 +83,6 @@ build-and-publish() {
 SOURCE_ROOT=$(cd $(dirname "$BASH_SOURCE"); pwd)
 cd $SOURCE_ROOT
 
-DATE=`date +%d-%m-%y` 
-build-and-publish > /tmp/build-and-publish-$DATE.log 2>&1 
+DATE=`date +%d-%m-%y`
+build-and-publish > /tmp/build-and-publish-$DATE.log 2>&1
 
