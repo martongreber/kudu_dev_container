@@ -12,3 +12,4 @@ index 70e6bcd9d..fa2bd0647 100644
 +    #set(KUDU_LINK "s")
    endif()
  endif()
+
