@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.3-labs
 # ---- Dev ----
-FROM ubuntu:18.04 as dev
+FROM ubuntu:20.04 as dev
 
 # Cache busting technique:
 # https://stackoverflow.com/questions/56945125/force-docker-to-rebuild-a-layer-based-on-latest-commit-of-a-git-repo
