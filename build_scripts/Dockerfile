@@ -1,6 +1,10 @@
 # syntax=docker/dockerfile:1.3-labs
+# Define a build argument for the base image
+ARG BASE_IMAGE=ubuntu:18.04
+
+# Use the build argument to specify the base image
 # ---- Dev ----
-FROM ubuntu:20.04 as dev
+FROM ${BASE_IMAGE} as dev
 
 # Cache busting technique:
 # https://stackoverflow.com/questions/56945125/force-docker-to-rebuild-a-layer-based-on-latest-commit-of-a-git-repo
